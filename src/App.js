@@ -18,18 +18,70 @@ class IronContacts extends React.Component {
   }
 
   addRandomContact = () => {
-    let displayCopy = [...this.state.display]
+    //let displayCopy = [...this.state.display]
     let randomIndex = Math.floor(Math.random()*this.state.notDisplayed.length)
     let randomContact = this.state.notDisplayed[randomIndex]
-    displayCopy.push(randomContact)
+    //displayCopy.push(randomContact)
 
-    // let notDisplayedCopy = [...this.state.notDisplayed].splice(randomIndex, 1)
-    // console.log(notDisplayedCopy)
+    let notDisplayedCopy = [...this.state.notDisplayed]
+    notDisplayedCopy.splice(randomIndex, 1)
+    //console.log(notDisplayedCopy.length)
 
     this.setState((state, props) => ({
-      display: displayCopy
-    }))    
-   
+      display: [...this.state.display, randomContact],
+      notDisplayed: notDisplayedCopy
+    }))
+  }
+
+  sortByName = () => {
+
+    const sortedByName = [...this.state.display].sort( (a,b) => {
+      if (a.name > b.name) {
+        return 1;
+      }
+      if (a.name < b.name) {
+        return -1;
+      }
+      return 0;
+    })
+    //console.log(sortedByName)
+
+    this.setState((state, props) => ({
+      display: sortedByName
+    }))
+  }
+
+  sortByPopularity = () => {
+
+    const sortedByPopularity = [...this.state.display].sort( (a,b) => {
+      if (a.popularity > b.popularity) {
+        return -1;
+      }
+      if (a.popularity < b.popularity) {
+        return 1;
+      }
+      return 0;
+    })
+    //console.log(sortedByPopularity)
+
+    this.setState((state, props) => ({
+      display: sortedByPopularity
+    }))
+  }
+
+  deleteContact = (index) => {
+    
+    let displayCopy = [...this.state.display]
+    let test = displayCopy.splice(index, 1)
+
+    let notDisplayedCopy = [...this.state.notDisplayed]
+    notDisplayedCopy.push(test)
+
+    this.setState((state, props) => ({
+      display: displayCopy,
+      notDisplayed: notDisplayedCopy
+    }))
+
   }
 
   render() {
@@ -46,7 +98,13 @@ class IronContacts extends React.Component {
           </td>
 
           <td>
-            {contact.popularity.toFixed(2)}
+            {(Math.round(contact.popularity * 100)/100).toFixed(2)}
+          </td>
+
+          <td>
+            <button onClick={() => this.deleteContact(index)}>
+              Delete From List
+            </button>
           </td>
 
         </tr>
@@ -61,12 +119,21 @@ class IronContacts extends React.Component {
           Add Random Contact
         </button>
 
+        <button onClick={this.sortByName}>
+          Sort By Name
+        </button>
+
+        <button onClick={this.sortByPopularity}>
+          Sort By Popularity
+        </button>
+
         <table>
           <thead>
             <tr>
               <th>Picture</th>
               <th>Name</th>
               <th>Popularity</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
